@@ -3,4 +3,4 @@ class Account:
         self.first_name = first_name
         self.last_name = last_name
         self.balance = 0
-        self.pesel = pesel
+        self.pesel = pesel if (len(pesel) == 11) else "Invalid"
