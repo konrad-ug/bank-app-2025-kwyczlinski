@@ -23,3 +23,11 @@ class TestAccount:
     def test_pesel_is_none(self):
         account = Account("John", "Doe", True)
         assert account.pesel == "Invalid"
+
+    def test_promo_code_is(self):
+        account = Account("John", "Doe", "81010200131", promo_code="PROM_M#1")
+        assert account.balance == 50
+    
+    def test_promo_code_invalid(self):
+        account = Account("John", "Doe", "81010200131", promo_code="Prom_122")
+        assert account.balance == 0
