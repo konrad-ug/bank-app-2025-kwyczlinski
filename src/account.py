@@ -19,6 +19,3 @@ class Account:
             self.balance -= amount + fee
             self.history.append(-amount)
             self.history.append(-fee)
-
-    def test_coverage(self):
-        pass
