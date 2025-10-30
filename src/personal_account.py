@@ -1,6 +1,8 @@
 from src.account import Account
 
 class PersonalAccount(Account):
+    express_outgoing_transfer_fee : float = 1.0
+
     def __init__(self, first_name : str, last_name : str, pesel : str, promo_code : str | None = None):
         super().__init__()
         self.first_name : str = first_name
@@ -23,7 +25,3 @@ class PersonalAccount(Account):
                 yob = 1900 + int(pesel[0:2])
         
         return True if (yob > 1960) else False
-    
-    def express_outgoing_transfer(self, amount : float) -> None:
-        return super().express_outgoing_transfer(amount, self.fee_amount)
-    
