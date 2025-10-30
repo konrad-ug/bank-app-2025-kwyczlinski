@@ -3,10 +3,11 @@ from src.account import Account
 class PersonalAccount(Account):
     def __init__(self, first_name : str, last_name : str, pesel : str, promo_code : str | None = None):
         super().__init__()
-        self.first_name = first_name
-        self.last_name = last_name
-        self.pesel = pesel if (self.is_pesel_valid(pesel)) else "Invalid"
-        self.balance = 50.0 if (self.is_pesel_valid(pesel)) and (self.is_promo_code_valid(promo_code) and self.is_not_too_old(pesel)) else 0.0
+        self.first_name : str = first_name
+        self.last_name : str = last_name
+        self.pesel : str = pesel if (self.is_pesel_valid(pesel)) else "Invalid"
+        self.balance : float = 50.0 if (self.is_pesel_valid(pesel)) and (self.is_promo_code_valid(promo_code) and self.is_not_too_old(pesel)) else 0.0
+        self.fee_amount : float = 1.0
 
     def is_pesel_valid(self, pesel : str) -> bool:
         return True if (isinstance(pesel, str) and len(pesel) == 11) else False
@@ -22,3 +23,7 @@ class PersonalAccount(Account):
                 yob = 1900 + int(pesel[0:2])
         
         return True if (yob > 1960) else False
+    
+    def express_outgoing_transfer(self, amount : float) -> None:
+        return super().express_outgoing_transfer(amount, self.fee_amount)
+    

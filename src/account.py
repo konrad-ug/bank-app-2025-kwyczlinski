@@ -2,10 +2,14 @@ class Account:
     def __init__(self):
         self.balance = 0.0
 
-    def incomming_transfer(self, amount : float) -> bool:
-        if (isinstance(amount, float)) and amount >= 0:
+    def incomming_transfer(self, amount : float) -> None:
+        if (isinstance(amount, float) and amount >= 0):
             self.balance += amount
 
-    def outgoing_transfer(self, amount : float) -> bool:
-        if (isinstance(amount, float)) and amount >= 0 and self.balance >= amount:
+    def outgoing_transfer(self, amount : float) -> None:
+        if (isinstance(amount, float) and amount >= 0 and self.balance >= amount):
             self.balance -= amount
+
+    def express_outgoing_transfer(self, amount : float, fee : float) -> None:
+        if (isinstance(amount, float) and amount >= 0 and self.balance >= amount):
+            self.balance -= amount + fee

@@ -1,4 +1,5 @@
 from src.personal_account import PersonalAccount
+from src.company_account import CompanyAccount
 
 class TestTransfers:
     def test_incomming_transfer(self):
@@ -62,3 +63,35 @@ class TestTransfers:
         account.balance = 100.0
         account.outgoing_transfer(None)
         assert account.balance == 100.0
+
+class TestExpressTransfers:
+    def test_personal_express(self):
+        account = PersonalAccount("John", "Doe", "81010200131")
+        account.balance = 50.0
+        account.express_outgoing_transfer(40.0)
+        assert account.balance == 9.0
+
+    def test_personal_express_dept(self):
+        account = PersonalAccount("John", "Doe", "81010200131")
+        account.balance = 50.0
+        account.express_outgoing_transfer(50.0)
+        assert account.balance == -1.0
+
+    def test_company_express(self):
+        account = CompanyAccount("Deere & Company", "0123456789")
+        account.balance = 50.0
+        account.express_outgoing_transfer(40.0)
+        assert account.balance == 5.0
+    
+    def test_company_express_dept(self):
+        account = CompanyAccount("Deere & Company", "0123456789")
+        account.balance = 50.0
+        account.express_outgoing_transfer(50.0)
+        assert account.balance == -5.0
+    
+    def test_company_express_bool(self):
+        account = CompanyAccount("Deere & Company", "0123456789")
+        account.balance = 100.0
+        account.express_outgoing_transfer(True)
+        assert account.balance == 100.0
+

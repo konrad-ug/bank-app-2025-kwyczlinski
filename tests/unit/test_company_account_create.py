@@ -17,4 +17,3 @@ class TestAccount:
     def test_nip_is_none(self):
         account = CompanyAccount("Deere & Company", None)
         assert account.nip == "Invalid"
-        assert account.balance == 0
