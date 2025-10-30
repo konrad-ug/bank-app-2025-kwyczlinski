@@ -36,3 +36,7 @@ class TestAccount:
     def test_promo_code_too_old(self):
         account = PersonalAccount("John", "Doe", "44010200131", promo_code="PROM_M#1")
         assert account.balance == 0
+
+    def test_promo_code_young(self):
+        account = PersonalAccount("John", "Doe", "01201010101", promo_code="PROM_M#1")
+        assert account.balance == 50.0
