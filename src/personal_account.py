@@ -25,3 +25,10 @@ class PersonalAccount(Account):
                 yob = 1900 + int(pesel[0:2])
         
         return True if (yob > 1960) else False
+
+    def submit_for_loan(self, amount: float) -> bool:
+        if (isinstance(amount, float) and amount > 0 and ((len(self.history) >= 3 and sorted(self.history[-3:])[0] > 0) or (len(self.history) >= 5 and sum(self.history[-5:]) > amount))):
+            self.balance += amount
+            return True
+        else:
+            return False

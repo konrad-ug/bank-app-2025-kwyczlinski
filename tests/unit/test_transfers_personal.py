@@ -1,113 +1,92 @@
 from src.personal_account import PersonalAccount
 from src.company_account import CompanyAccount
+import pytest
 
 class TestTransfers:
-    def test_incomming_transfer(self):
+    @pytest.fixture()
+    def account(self):
         account = PersonalAccount("John", "Doe", "81010200131")
-        account.incomming_transfer(20.0)
-        assert account.balance == 20.0
-        assert account.history == [20.0]
+        return account
 
-    def test_incomming_negative(self):
-        account = PersonalAccount("John", "Doe", "81010200131")
-        account.incomming_transfer(-20.0)
-        assert account.balance == 0.0
-        assert account.history == []
+    @pytest.mark.parametrize("amount, expected_balance, expected_history", [
+        (20.0, 20.0, [20.0]),
+        (-20.0, 0.0, []),
+        ("money", 0.0, []),
+        (True, 0.0, []),
+        (None, 0.0, [])
+    ],
+    ids=[
+        "correct incoming transfer",
+        "incoming negative",
+        "incoming amount wrong type str",
+        "incoming amount wrong type bool",
+        "incoming amount wrong type None"
+    ])
+    def test_transfers_incoming(self, account, amount: float, expected_balance: float, expected_history: list[float]):
+        account.incomming_transfer(amount)
+        assert account.balance == expected_balance
+        assert account.history == expected_history
 
-    def test_incomming_wrong_type_str(self):
-        account = PersonalAccount("John", "Doe", "81010200131")
-        account.incomming_transfer("money")
-        assert account.balance == 0.0
-        assert account.history == []
-
-    def test_incomming_wrong_type_bool(self):
-        account = PersonalAccount("John", "Doe", "81010200131")
-        account.incomming_transfer(True)
-        assert account.balance == 0.0
-        assert account.history == []
-
-    def test_incomming_wrong_type_none(self):
-        account = PersonalAccount("John", "Doe", "81010200131")
-        account.incomming_transfer(None)
-        assert account.balance == 0.0
-        assert account.history == []
-
-    def test_outgoing_transfer(self):
-        account = PersonalAccount("John", "Doe", "81010200131") #1. set up
-        account.balance = 100.0 #1. set up
-
-        account.outgoing_transfer(20.0) #2. action
-
-        assert account.balance == 80.0 #3. assertion
-        assert account.history == [-20.0]
-
-    def test_outgoing_exceeding_balance(self):
-        account = PersonalAccount("John", "Doe", "81010200131")
-        account.balance = 50.0
-        account.outgoing_transfer(100.0)
-        assert account.balance == 50.0
-        assert account.history == []
-
-    def test_outgoing_negative(self):
-        account = PersonalAccount("John", "Doe", "81010200131")
-        account.outgoing_transfer(-50.0)
-        assert account.balance == 0.0
-        assert account.history == []
-
-    def test_outgoing_wrong_type_str(self):
-        account = PersonalAccount("John", "Doe", "81010200131")
-        account.balance = 100.0
-        account.outgoing_transfer("money")
-        assert account.balance == 100.0
-        assert account.history == []
-       
-
-    def test_outgoing_wrong_type_bool(self):
-        account = PersonalAccount("John", "Doe", "81010200131")
-        account.balance = 100.0
-        account.outgoing_transfer(True)
-        assert account.balance == 100.0
-        assert account.history == []
-
-    def test_outgoing_wrong_type_none(self):
-        account = PersonalAccount("John", "Doe", "81010200131")
-        account.balance = 100.0
-        account.outgoing_transfer(None)
-        assert account.balance == 100.0
-        assert account.history == []
+    @pytest.mark.parametrize("balance, amount, expected_balance, expected_history", [
+        (100.0, 20.0, 80.0, [-20.0]),
+        (50.0, 100.0, 50.0, []),
+        (0.0, -50.0, 0.0, []),
+        (100.0, "money", 100.0, []),
+        (100.0, True, 100.0, []),
+        (100.0, None, 100.0, [])
+    ],
+    ids=[
+        "correct outgoing transfer",
+        "outgoing exceeding balance",
+        "outgoing negative",
+        "outgoing amount wrong type str",
+        "outgoing amount wrong type bool",
+        "outgoing amount wrong type None"
+    ]
+    )
+    def test_transfers_outgoing(self, account, balance: float, amount: float, expected_balance: float, expected_history: list[float]):
+        account.balance = balance
+        account.outgoing_transfer(amount)
+        assert account.balance == expected_balance
+        assert account.history == expected_history
 
 class TestExpressTransfers:
-    def test_personal_express(self):
-        account = PersonalAccount("John", "Doe", "81010200131")
-        account.balance = 50.0
-        account.express_outgoing_transfer(40.0)
-        assert account.balance == 9.0
-        assert account.history == [-40.0, -1.0]
+    @pytest.fixture()
+    def personal_account(self):
+        personal_account = PersonalAccount("John", "Doe", "81010200131")
+        return personal_account
+    
+    @pytest.fixture()
+    def company_account(self):
+        company_account = CompanyAccount("Deere & Company", "0123456789")
+        return company_account
 
-    def test_personal_express_dept(self):
-        account = PersonalAccount("John", "Doe", "81010200131")
-        account.balance = 50.0
-        account.express_outgoing_transfer(50.0)
-        assert account.balance == -1.0
-        assert account.history == [-50.0, -1.0]
+    @pytest.mark.parametrize("balance, amount, expected_balance, expected_history", [
+        (50.0, 40.0, 9.0, [-40.0, -1.0]),
+        (50.0, 50.0, -1.0, [-50.0, -1.0])
+    ],
+    ids=[
+        "correct personal express",
+        "personal express dept"
+    ])
+    def test_personal_express(self, personal_account, balance: float, amount: float, expected_balance: float, expected_history: list[float]):
+        personal_account.balance = balance
+        personal_account.express_outgoing_transfer(amount)
+        assert personal_account.balance == expected_balance
+        assert personal_account.history == expected_history
 
-    def test_company_express(self):
-        account = CompanyAccount("Deere & Company", "0123456789")
-        account.balance = 50.0
-        account.express_outgoing_transfer(40.0)
-        assert account.balance == 5.0
-        assert account.history == [-40.0, -5.0]
-
-    def test_company_express_dept(self):
-        account = CompanyAccount("Deere & Company", "0123456789")
-        account.balance = 50.0
-        account.express_outgoing_transfer(50.0)
-        assert account.balance == -5.0
-        assert account.history == [-50.0, -5.0]
-
-    def test_company_express_bool(self):
-        account = CompanyAccount("Deere & Company", "0123456789")
-        account.balance = 100.0
-        account.express_outgoing_transfer(True)
-        assert account.balance == 100.0
-        assert account.history == []
+    @pytest.mark.parametrize("balance, amount, expected_balance, expected_history", [
+        (50.0, 40.0, 5.0, [-40.0, -5.0]),
+        (50.0, 50.0, -5.0, [-50.0, -5.0]),
+        (100.0, True, 100.0, [])
+    ],
+    ids=[
+        "correct company express",
+        "company express dept",
+        "express amount wrong type bool"
+    ])
+    def test_company_express(self, company_account, balance: float, amount: float, expected_balance: float, expected_history: list[float]):
+        company_account.balance = balance
+        company_account.express_outgoing_transfer(amount)
+        assert company_account.balance == expected_balance
+        assert company_account.history == expected_history
