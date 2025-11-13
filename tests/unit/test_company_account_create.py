@@ -1,6 +1,6 @@
 from src.company_account import CompanyAccount
 
-class TestAccount:
+class TestCompanyAccount:
     def test_account_creation(self):
         account = CompanyAccount("Deere & Company", "0123456789")
         assert account.balance == 0

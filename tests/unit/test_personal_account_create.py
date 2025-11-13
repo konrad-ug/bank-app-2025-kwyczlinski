@@ -1,6 +1,6 @@
 from src.personal_account import PersonalAccount
 
-class TestAccount:
+class TestPersonalAccount:
     def test_account_creation(self):
         account = PersonalAccount("John", "Doe", "81010200131")
         assert account.first_name == "John"
