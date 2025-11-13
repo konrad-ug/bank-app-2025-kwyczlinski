@@ -1,42 +1,47 @@
 from src.personal_account import PersonalAccount
+import pytest
 
 class TestPersonalAccount:
-    def test_account_creation(self):
-        account = PersonalAccount("John", "Doe", "81010200131")
-        assert account.first_name == "John"
-        assert account.last_name == "Doe"
-        assert account.balance == 0
-        assert account.pesel == "81010200131"
 
-    def test_pesel_too_short(self):
-        account = PersonalAccount("John", "Doe", "810131")
-        assert account.pesel == "Invalid"
+    # @pytest.fixture(autouse=True, scope="function")
+    # def account(self):
+    #     self.account = PersonalAccount("John", "Doe", "81010200131")
+    #     # yield
+    #     # del self.account
 
-    def test_pesel_too_long(self):
-        account = PersonalAccount("John", "Doe", "8101010102000131")
-        assert account.pesel == "Invalid"
+    # def test_account_creation(self):
+    #     assert self.account.first_name == "John"
+    #     assert self.account.last_name == "Doe"
+    #     assert self.account.balance == 0
+    #     assert self.account.pesel == "81010200131"
 
-    def test_pesel_is_none(self):
-        account = PersonalAccount("John", "Doe", None, promo_code="PROM_M#1")
-        assert account.pesel == "Invalid"
-        assert account.balance == 0
+    # different way of use
 
-    def test_pesel_is_true(self):
-        account = PersonalAccount("John", "Doe", True)
-        assert account.pesel == "Invalid"
-
-    def test_promo_code_correct(self):
-        account = PersonalAccount("John", "Doe", "81010200131", promo_code="PROM_M#1")
-        assert account.balance == 50
-    
-    def test_promo_code_invalid(self):
-        account = PersonalAccount("John", "Doe", "81010200131", promo_code="Prom_122")
-        assert account.balance == 0
-
-    def test_promo_code_too_old(self):
-        account = PersonalAccount("John", "Doe", "44010200131", promo_code="PROM_M#1")
-        assert account.balance == 0
-
-    def test_promo_code_young(self):
-        account = PersonalAccount("John", "Doe", "01201010101", promo_code="PROM_M#1")
-        assert account.balance == 50.0
+    @pytest.mark.parametrize("first_name, last_name, pesel, promo_code, expected_pesel, expected_balance", [
+        ("John", "Doe", "81010200131", None, "81010200131", 0.0),
+        ("John", "Doe", "810131", None, "Invalid", 0.0),
+        ("John", "Doe", "8101010102000131", None, "Invalid", 0.0),
+        ("John", "Doe", None, "PROM_M#1", "Invalid", 0.0),
+        ("John", "Doe", True, None, "Invalid", 0.0),
+        ("John", "Doe", "81010200131", "PROM_M#1", "81010200131", 50.0),
+        ("John", "Doe", "81010200131", "Prom_122", "81010200131", 0.0),
+        ("John", "Doe", "44010200131", "PROM_M#1", "44010200131", 0.0),
+        ("John", "Doe", "01201010101", "PROM_M#1", "01201010101", 50.0)
+    ],
+    ids=[
+        "correct data",
+        "pesel too short",
+        "pesel too long",
+        "pesel wrong type None",
+        "pesel wrong type True",
+        "promo code correct",
+        "promo code invalid",
+        "too old for promo code",
+        "young client new pesel promo code",
+    ])
+    def test_personal_account_creation(self, first_name: str, last_name: str, pesel: str, promo_code: str, expected_pesel: str, expected_balance: float):
+        account = PersonalAccount(first_name, last_name, pesel, promo_code)
+        assert account.first_name == first_name
+        assert account.last_name == last_name
+        assert account.pesel == expected_pesel
+        assert account.balance == expected_balance
