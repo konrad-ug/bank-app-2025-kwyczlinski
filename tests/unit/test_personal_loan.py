@@ -29,7 +29,7 @@ class TestPersonalLoan:
         "negative amount",
         "amount type bool"
     ])
-    def test_loan(self, account, history: list[float], amount: float, expected_result: bool, expected_balance: float):
+    def test_personal_loan(self, account, history: list[float], amount: float, expected_result: bool, expected_balance: float):
         account.history = history
         assert account.submit_for_loan(amount) == expected_result
         assert account.balance == expected_balance

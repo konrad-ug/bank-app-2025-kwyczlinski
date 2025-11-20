@@ -33,7 +33,7 @@ class TestPersonalAccount:
         "pesel too short",
         "pesel too long",
         "pesel wrong type None",
-        "pesel wrong type True",
+        "pesel wrong type bool",
         "promo code correct",
         "promo code invalid",
         "too old for promo code",
