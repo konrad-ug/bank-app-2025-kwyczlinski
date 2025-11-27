@@ -11,3 +11,9 @@ class CompanyAccount(Account):
 
     def is_nip_valid(self, nip : str) -> bool:
         return True if (isinstance(nip, str) and len(nip) == 10) else False
+
+    def take_loan(self, amount: float) -> bool:
+        if (isinstance(amount, float) and amount > 0 and self.balance >= 2*amount and self.history.__contains__(-1775)):
+            self.balance += amount
+            return True
+        return False

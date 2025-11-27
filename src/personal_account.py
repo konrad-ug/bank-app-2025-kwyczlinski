@@ -30,5 +30,4 @@ class PersonalAccount(Account):
         if (isinstance(amount, float) and amount > 0 and ((len(self.history) >= 3 and sorted(self.history[-3:])[0] > 0) or (len(self.history) >= 5 and sum(self.history[-5:]) > amount))):
             self.balance += amount
             return True
-        else:
-            return False
+        return False
