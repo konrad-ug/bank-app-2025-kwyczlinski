@@ -39,7 +39,7 @@ def get_account_by_pesel(pesel):
     account = registry.find(pesel)
     if (not account):
         return jsonify({"error": "Account not found"}), 404
-    return jsonify({"first_name": account.first_name, "last_name": account.last_name}), 200
+    return jsonify({"first_name": account.first_name, "last_name": account.last_name, "pesel": account.pesel, "balance": account.balance}), 200
 
 # @app.route("/api/accounts/<pesel>", methods=['PATCH'])
 @app.patch("/api/accounts/<pesel>")
@@ -65,3 +65,29 @@ def delete_account(pesel):
 
     registry.delete(pesel)
     return jsonify({"message": "Account deleted"}), 200
+
+@app.post("/api/accounts/<pesel>/transfer")
+def transfer(pesel):
+    print("Transfer request recieved")
+    data = request.get_json()
+
+    account = registry.find(pesel)
+
+    if (not account):
+        return jsonify({"message": "Account not found"}), 404
+
+    match data["type"]:
+        case "incoming":
+            if (account.incomming_transfer(data["amount"])):
+                return jsonify({"message": "Zlecenie przyjęto do realizacji"}), 200
+            return jsonify({"message": "Transfer Failed"}), 422
+        case "outgoing":
+            if (account.outgoing_transfer(data["amount"])):
+                return jsonify({"message": "Zlecenie przyjęto do realizacji"}), 200
+            return jsonify({"message": "Transfer Failed"}), 422
+        case "express":
+            if (account.express_outgoing_transfer(data["amount"])):
+                return jsonify({"message": "Zlecenie przyjęto do realizacji"}), 200
+            return jsonify({"message": "Transfer Failed"}), 422
+        case _:
+            return jsonify({"message": "Bad transfer type"}), 400
