@@ -14,21 +14,11 @@ class TestAPI:
         }
         response = requests.post(url, json=payload)
         assert response.status_code == 201
+        assert response.json()["message"] == "Account created"
         yield
         all_accounts = requests.get(f"{self.url}/accounts").json()
         for account in all_accounts:
             requests.delete(f'{self.url}/accounts/{account["pesel"]}')
-
-    def test_create_account(self):
-        url = f"{self.url}/accounts"
-        payload = {
-            "first_name": "John",
-            "last_name": "Doe",
-            "pesel": "81010200131"
-        }
-        response = requests.post(url, json=payload)
-        assert response.status_code == 201
-        assert response.json()["message"] == "Account created"
 
     def test_get_account_count(self):
         url = f"{self.url}/accounts/count"
@@ -100,3 +90,14 @@ class TestAPI:
 
         response = requests.delete(url)
         assert response.status_code == 404
+
+    def test_account_already_exists(self):
+        url = f"{self.url}/accounts"
+        payload = {
+            "first_name": "John",
+            "last_name": "Doe",
+            "pesel": "81010200131"
+        }
+        response = requests.post(url, json=payload)
+        assert response.status_code == 409
+        assert response.json()["message"] == "Account with this pesel already exists"
