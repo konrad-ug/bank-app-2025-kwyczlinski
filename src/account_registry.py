@@ -13,10 +13,16 @@ class AccountRegistry:
                 return account
         return None
     
-    def all_accounts(self):
+    def all_accounts(self) -> list[PersonalAccount]:
         return self.accounts
     
-    def number_accounts(self):
+    def count(self) -> int:
         num = len(self.accounts)
         return num
+    
+    def delete(self, pesel) -> None:
+        if (self.find(pesel)):
+            self.accounts.remove(self.find(pesel))
+        return None
+
     
