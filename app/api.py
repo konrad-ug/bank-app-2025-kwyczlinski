@@ -71,6 +71,9 @@ def transfer(pesel):
     print("Transfer request recieved")
     data = request.get_json()
 
+    if (not data or "amount" not in data or "type" not in data or not data["amount"] or not data["type"]):
+        return jsonify({"message": "Request body must contain 'amount' and 'type'"}), 400
+
     account = registry.find(pesel)
 
     if (not account):
