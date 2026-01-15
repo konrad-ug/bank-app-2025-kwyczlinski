@@ -57,7 +57,11 @@ class TestExpressTransfers:
         return personal_account
     
     @pytest.fixture()
-    def company_account(self):
+    def company_account(self, mocker):
+        mock_verify_nip_api = mocker.Mock()
+        mock_verify_nip_api.verify_nip_api.return_value = True
+        mocker.patch.object(CompanyAccount, "verify_nip_api", new_callable=mock_verify_nip_api)
+
         company_account = CompanyAccount("Deere & Company", "0123456789")
         return company_account
 
