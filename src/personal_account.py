@@ -2,6 +2,7 @@ from src.account import Account
 
 class PersonalAccount(Account):
     express_outgoing_transfer_fee : float = 1.0
+    history_email_prefix: str = "Personal account history:"
 
     def __init__(self, first_name : str, last_name : str, pesel : str, promo_code : str | None = None):
         super().__init__()
@@ -14,7 +15,7 @@ class PersonalAccount(Account):
     def is_pesel_valid(self, pesel : str) -> bool:
         return True if (isinstance(pesel, str) and len(pesel) == 11) else False
 
-    def is_promo_code_valid(self, promo_code : str) -> bool:
+    def is_promo_code_valid(self, promo_code : str | None) -> bool:
         return True if (isinstance(promo_code,str) and len(promo_code) == 8 and promo_code.startswith("PROM_")) else False
 
     def is_not_too_old(self, pesel : str) -> bool:

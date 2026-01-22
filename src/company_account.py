@@ -6,7 +6,8 @@ BANK_APP_MF_URL = "https://wl-test.mf.gov.pl"
 
 
 class CompanyAccount(Account):
-    express_outgoing_transfer_fee : float = 5.0 
+    express_outgoing_transfer_fee : float = 5.0
+    history_email_prefix: str = "Company account history:"
 
     def __init__(self, company_name : str, nip : str):
         super().__init__()
